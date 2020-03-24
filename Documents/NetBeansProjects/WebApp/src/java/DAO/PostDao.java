@@ -170,7 +170,56 @@ public class PostDao extends Dao implements IPostDao {
 
         return posts;
     }
+    @Override
+ public List<Post> getAllPostByCommunityId(int communityId){
+     Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        List<Post> posts = new ArrayList();
 
+        try {
+            con = getConnection();
+            String query = "SELECT u.username, c.communityName, p.postID, p.userID, p.postTitle, p.postDesc, p.postDate, p.media, p.status FROM posts p INNER JOIN users u ON u.userId = p.userId LEFT JOIN community c ON c.communityId = p.communityId WHERE p.STATUS = 1 AND p.communityId =? ORDER BY p.postDate DESC";
+            ps = con.prepareStatement(query);
+            ps.setInt(1, communityId);
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+             Post p = new Post(
+                        rs.getInt("postId"),
+                        rs.getInt("userId"),
+                        rs.getString("postTitle"),
+                        rs.getString("postDesc"),
+                        rs.getString("postDate"),
+                        rs.getString("media"),
+                        rs.getInt("status"),
+                        rs.getString("username"),
+                        rs.getString("communityName")
+                );
+                posts.add(p);
+            }
+        } catch (SQLException e) {
+            System.out.println("Exception occured in the getAllPosts() method: " + e.getMessage());
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (ps != null) {
+                    ps.close();
+                }
+                if (con != null) {
+                    freeConnection(con);
+                }
+            } catch (SQLException e) {
+                System.out.println("Exception occured in the finally section of the getAllPosts() method: " + e.getMessage());
+            }
+        }
+
+        return posts;
+
+ }
+ 
     @Override
     public boolean makePost(int userId, String postTitle, String postDesc, String media) {
         Connection con = null;
@@ -284,6 +333,7 @@ public class PostDao extends Dao implements IPostDao {
         PostDao pd = new PostDao("repos");
         // System.out.println(pd.makePost(35, "hola mundo", "com el teu grupo no ho fan seus feina te quedaras falta i sense res per fer", "ni una mierda"));
         //System.out.println(pd.getPostsByUser(36));
-        System.out.println(pd.getOnePost(23));
+       // System.out.println(pd.getOnePost(23));
+        System.out.println(pd.getAllPostByCommunityId(5));
     }
 }

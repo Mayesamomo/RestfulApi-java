@@ -14,10 +14,16 @@ import java.util.List;
  * @author micha
  */
 public interface ICommunityDao {
+
     ArrayList<Community> getAllCommunity();
+
     ArrayList<Community> getCommunityByUser(int userId);
+
     ArrayList<Community> getCommunityById(int communityId);
-     boolean createCommunity(int userId, String communityName);
-     boolean updateCommunity(int communityId, String communityName);
-      boolean deleteCommunity(int communityId);
+
+    boolean createCommunity(int userId, String communityName);
+
+    boolean updateCommunity(int communityId, String communityName);
+
+    boolean deleteCommunity(int communityId);
 }

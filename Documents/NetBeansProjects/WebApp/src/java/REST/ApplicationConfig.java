@@ -29,6 +29,7 @@ public class ApplicationConfig extends Application {
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
        
+        resources.add(REST.CommentResource.class);
         resources.add(REST.CommunityResource.class);
         resources.add(REST.CrossOriginResourceSharingFilter.class);
         resources.add(REST.PostResource.class);

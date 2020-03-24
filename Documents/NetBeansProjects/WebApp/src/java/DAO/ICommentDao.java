@@ -25,4 +25,5 @@ public interface ICommentDao {
     public boolean deleteComment(int commentID);
 
     public boolean updateComment(int commentID, String desc);
+    public int countCommentOfPost(int postId);
 }

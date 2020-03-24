@@ -12,6 +12,7 @@ import java.util.Objects;
  * @author micha
  */
 public class Community {
+
     private int communityId;
     private int userId;
     private String username;
@@ -41,6 +42,22 @@ public class Community {
     public Community(int userId, String communityName) {
         this.userId = userId;
         this.communityName = communityName;
+    }
+
+    public Community(int communityId, String communityName, String date, int status) {
+        this.communityId = communityId;
+        this.communityName = communityName;
+        this.date = date;
+        this.status = status;
+    }
+
+    public Community(int communityId, int userId, String communityName,String username, String date, int status) {
+         this.communityId = communityId;
+        this.userId = userId;
+        this.communityName = communityName;
+         this.username = username;
+        this.date = date;
+        this.status = status;
     }
 
     public int getCommunityId() {
@@ -141,8 +158,4 @@ public class Community {
         return "Community{" + "communityId=" + communityId + ", userId=" + userId + ", username=" + username + ", communityName=" + communityName + ", date=" + date + ", status=" + status + '}';
     }
 
-    
-    
-    
-    
 }

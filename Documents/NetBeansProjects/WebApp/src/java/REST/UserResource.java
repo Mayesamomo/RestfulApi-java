@@ -14,6 +14,7 @@ import DTO.User;
 import java.text.ParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Produces;
@@ -37,7 +38,7 @@ public class UserResource {
 
     @Context
     private UriInfo context;
-
+ private HttpServletResponse response;
     /**
      * Creates a new instance of UserResource
      */
@@ -104,6 +105,7 @@ public class UserResource {
                 return Response.status(201).entity("Wrong username or password !!").build();
             }else{
                   uDAO.login(userName, password);
+                  
                   return Response.status(200).entity("LoggedIn!").build();
             }
           

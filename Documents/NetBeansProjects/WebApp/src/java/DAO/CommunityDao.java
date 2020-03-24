@@ -23,22 +23,23 @@ public class CommunityDao extends Dao implements ICommunityDao {
     }
 
     @Override
-    public ArrayList<Community> getAllCommunitys() {
+    public ArrayList<Community> getAllCommunity() {
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
         ArrayList<Community> community = new ArrayList();
         try {
             con = getConnection();
-            String query = "select * from community where status =1";
+            String query = "SELECT u.username, c.communityId, c.userId, c.communityName, c.date, c.status FROM community c INNER JOIN users u ON c.userId =u.userId WHERE c.status = 1 ORDER BY c.date DESC";
             ps = con.prepareStatement(query);
             rs = ps.executeQuery();
 
             while (rs.next()) {
                 Community comm = new Community(
                         rs.getInt("communityId"),
-                        rs.getString("username"),
+                        rs.getInt("userID"),
                         rs.getString("communityName"),
+                         rs.getString("username"),
                         rs.getString("date"),
                         rs.getInt("status"));
                 community.add(comm);
@@ -261,9 +262,11 @@ public class CommunityDao extends Dao implements ICommunityDao {
         }
         return flag;
     }
+    
     public static void main(String[] args) {
         ICommunityDao da = new CommunityDao("repos");
         //Community co = new Community(35, );
-        System.out.println(da.deleteCommunity(13));
+       // System.out.println(da.deleteCommunity(13));
+        System.out.println(da.getAllCommunity());
     }
 }

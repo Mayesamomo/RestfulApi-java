@@ -7,13 +7,14 @@ package DAO;
 
 import DTO.Community;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author micha
  */
 public interface ICommunityDao {
-    ArrayList<Community> getAllCommunitys();
+    ArrayList<Community> getAllCommunity();
     ArrayList<Community> getCommunityByUser(int userId);
     ArrayList<Community> getCommunityById(int communityId);
      boolean createCommunity(int userId, String communityName);

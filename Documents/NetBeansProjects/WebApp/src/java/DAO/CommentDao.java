@@ -263,4 +263,13 @@ public class CommentDao extends Dao implements ICommentDao {
         return flag;
     }
 
+   public int countCommentOfPost(int postId) {
+        return 0;
+//        Connection con = null;
+//        PreparedStatement ps = null;
+//        ResultSet rs = null;
+//        boolean flag = false;
+//        
+   }
+
 }

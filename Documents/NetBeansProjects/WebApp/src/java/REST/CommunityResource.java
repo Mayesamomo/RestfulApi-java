@@ -46,8 +46,9 @@ public class CommunityResource {
     private JSONObject convertCommunityToJson(Community c) {
         JSONObject jObj = new JSONObject();
         jObj.put("userId", c.getUserId());
-        jObj.put("community", c.getCommunityId());
+        jObj.put("communityId", c.getCommunityId());
         jObj.put("communityName", c.getCommunityName());
+         jObj.put("username", c.getUsername());
         jObj.put("date", c.getDate());
         jObj.put("status", c.getStatus());
         return jObj;
@@ -58,17 +59,42 @@ public class CommunityResource {
      *
      * @return an instance of java.lang.String
      */
+//     public String getAllPosts() {
+//        IPostDao DB = new PostDao("repos");
+//
+//        System.out.println("GET called: getAllPosts");
+//
+//        JSONArray array = new JSONArray();
+//        try {
+//            for (Post p : DB.getAllPosts()) {
+//                JSONObject obj = convertPostToJson(p);
+//                array.add(obj);
+//            }
+//            JSONObject response = new JSONObject();
+//            response.put("Posts", array);
+//        } catch (Exception e) {
+//            //e.printStackTrace();
+//            // This exception sends error message to client
+//            throw new javax.ws.rs.ServerErrorException(e.getMessage(), 500);
+//        }
+//
+//        return array.toJSONString();
+    //return response.toJSONString();
+    @GET
+    @Path("/getAllCommunity")
+    @Produces(MediaType.TEXT_PLAIN)
     public String getAllCommunitys() {
 
         System.out.println("GET called: getAllCommunity");
 
         JSONArray array = new JSONArray();
         try {
-            db.getAllCommunitys().stream().map((c) -> convertCommunityToJson(c)).forEachOrdered((obj) -> {
+            for (Community c : db.getAllCommunity()) {
+                JSONObject obj = convertCommunityToJson(c);
                 array.add(obj);
-            });
-            JSONObject response = new JSONObject();
-            response.put("Community", array);
+                JSONObject response = new JSONObject();
+                response.put("Community", array);
+            }
         } catch (Exception e) {
             //e.printStackTrace();
             // This exception sends error message to client
@@ -105,8 +131,31 @@ public class CommunityResource {
         return array.toJSONString();
     }
 
-    
-   @POST
+    @GET
+    @Path("/getCommunityById/{communityId}")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String getOnePost(@PathParam("communityId") int communityId) {
+
+      
+
+        System.out.println("GET called: getOnePosts");
+        JSONArray array = new JSONArray();
+        try {
+            db.getCommunityById(communityId).stream().map((c) -> convertCommunityToJson(c)).forEachOrdered((obj) -> {
+                array.add(obj);
+            });
+            JSONObject response = new JSONObject();
+            response.put("community", array);
+        } catch (Exception e) {
+            //e.printStackTrace();
+            // This exception sends error message to client
+            throw new javax.ws.rs.ServerErrorException(e.getMessage(), 500);
+        }
+
+        return array.toJSONString();
+    }
+ 
+    @POST
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.TEXT_PLAIN)
     public boolean CreateCommunity(String content) {
@@ -119,8 +168,7 @@ public class CommunityResource {
             String communityContent = (String) obj.get("content");
             if (communityContent != null) {
                 if (!communityContent.isEmpty()) {
-                    
-                   
+
                     flag = db.createCommunity(userId, communityContent);
                 }
             }
@@ -131,12 +179,13 @@ public class CommunityResource {
         }
         return flag;
     }
+
     /**
      * PUT method for updating or creating an instance of CommunityResource
      *
      * @param content representation for the resource
      */
-   @PUT
+    @PUT
     @Path("/deleteCommunity/{communityId}")
     @Consumes(MediaType.TEXT_PLAIN)
     public boolean deletePost(@PathParam("loginDetails") int communityId) {
@@ -145,8 +194,8 @@ public class CommunityResource {
         try {
             if (communityId != -1) {
                 System.out.println("community received in DELETE message = " + communityId);
-                
-                flag =db.deleteCommunity(communityId);
+
+                flag = db.deleteCommunity(communityId);
             }
         } catch (Exception e) {
             System.out.println("Exception is Topic DELETE : " + e.getMessage());
@@ -155,19 +204,19 @@ public class CommunityResource {
         }
         return flag;
     }
-    
+
     //update community
     @PUT
     @Path("/updateCommunity/{communityId}")
     @Consumes(MediaType.TEXT_PLAIN)
     public boolean deletePost(@PathParam("loginDetails") int communityId, String communityName) {
-        System.out.println("'UPDATE' content = " + communityId + " " +communityName);
+        System.out.println("'UPDATE' content = " + communityId + " " + communityName);
         boolean flag = false;
         try {
-            if (communityId != -1 && communityName!=null) {
+            if (communityId != -1 && communityName != null) {
                 System.out.println("community received in UPDATE message = " + communityId);
-                
-                flag =db.updateCommunity(communityId, communityName);
+
+                flag = db.updateCommunity(communityId, communityName);
             }
         } catch (Exception e) {
             System.out.println("Exception is Topic UPDATE : " + e.getMessage());

@@ -13,7 +13,7 @@ import java.util.ArrayList;
  * @author micha
  */
 public interface ICommunityDao {
-    ArrayList<Community> getAllCommunitys();
+    ArrayList<Community> getAllCommunity();
     ArrayList<Community> getCommunityByUser(int userId);
     ArrayList<Community> getCommunityById(int communityId);
      boolean createCommunity(int userId, String communityName);

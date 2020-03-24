@@ -23,7 +23,7 @@ public class CommunityDao extends Dao implements ICommunityDao {
     }
 
     @Override
-    public ArrayList<Community> getAllCommunitys() {
+    public ArrayList<Community> getAllCommunity() {
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
@@ -37,7 +37,7 @@ public class CommunityDao extends Dao implements ICommunityDao {
             while (rs.next()) {
                 Community comm = new Community(
                         rs.getInt("communityId"),
-                        rs.getString("username"),
+                       // rs.getString("username"),
                         rs.getString("communityName"),
                         rs.getString("date"),
                         rs.getInt("status"));
@@ -264,6 +264,7 @@ public class CommunityDao extends Dao implements ICommunityDao {
     public static void main(String[] args) {
         ICommunityDao da = new CommunityDao("repos");
         //Community co = new Community(35, );
-        System.out.println(da.deleteCommunity(13));
+       // System.out.println(da.deleteCommunity(13));
+        System.out.println(da.getAllCommunity());
     }
 }

@@ -13,8 +13,11 @@ import DTO.User;
  */
 public interface IUserDao {
 
-    public boolean register(String fullname,String userName, String password, String email);
+    public boolean register(String fullname, String userName, String password, String email);
 
-     public boolean login(String user_name, String password);
-     public boolean checkIfExist(int userId);
+    public User login(String username, String password);
+
+    public boolean checkIfExist(int userId);
+
+    public boolean ValidateLogin(String username, String email);
 }

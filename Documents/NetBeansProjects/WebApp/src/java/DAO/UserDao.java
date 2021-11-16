@@ -79,47 +79,49 @@ public class UserDao extends Dao implements IUserDao {
 
     //login
     @Override
-    public boolean login(String user_name, String password) {
+    public User login(String username, String password) {
         Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
             con = getConnection();
 
-            String query = "select username, password from users where username = ?";
+            //String query = "Select u.userId, u.username, up.active from users u ,userprofile up where u.userName = ? AND u.password = ? AND up.active = 1";
+            String query = "Select userId, username, password from users where username = ?";
             ps = con.prepareStatement(query);
-            ps.setString(1, user_name);
+            ps.setString(1, username);
+
             rs = ps.executeQuery();
             int count = 0;
             int userId = 0;
-            String username = "";
+            String userName = "";
             String storedPassword = "";
             while (rs.next()) {
                 count++;
-                username = rs.getString("username");
-                //userId = rs.getInt("userId");
+                userId = rs.getInt("userId");
+                userName = rs.getString("username");
                 storedPassword = rs.getString("password");
             }
             System.out.println("id:" + userId);
             System.out.println("count:" + count);
-            if (count == 1)//returns  1, a user with this username, so password match is to be checked:
+            if (count == 1)//rs is 1, there is a user with this username, therefore:
             {
                 if (checkPassword(password, storedPassword) == true) {
-                    String query2 = "SELECT userId, profileId, userType FROM userprofile WHERE userId = ? AND status =1";
+                    String query2 = "SELECT up.userId, up.profileId, up.userType, u.username,u.fullName,u.email,up.status , u.userId FROM userprofile up INNER join users u ON u.userId = up.userId WHERE up.userId = ?";
                     ps = con.prepareStatement(query2);
                     ps.setInt(1, userId);
                     rs = ps.executeQuery();
                     while (rs.next()) {
-                        User u = new User(rs.getInt("userId"), rs.getInt("profileId"), rs.getInt("userType"), username);
-                        return true;
+                        User u = new User(rs.getInt("userId"),
+                                rs.getInt("profileId"),
+                                rs.getString("fullName"),
+                                rs.getString("email"),
+                                rs.getInt("status"),
+                                rs.getString("userType"),
+                                userName);
+                        return u;
                     }
-                } else {
-                    System.out.println("Wrong password");
-                    return false;
                 }
-            } else {
-                System.out.println("wrong  username");
-                return false;
             }
         } catch (SQLException e) {
             System.out.println("Exception occured in the login() method: " + e.getMessage());
@@ -139,7 +141,7 @@ public class UserDao extends Dao implements IUserDao {
             }
         }
         User u = new User();
-        return true;
+        return u;
     }
 //hash password before inserting into the database for security
 
@@ -191,15 +193,48 @@ public class UserDao extends Dao implements IUserDao {
         } catch (SQLException e) {
             System.out.println("Exception occured in the register() method: " + e.getMessage());
         }
-        flag=false;
+        flag = false;
         return flag;
-       
+
+    }
+
+    @Override
+    public boolean ValidateLogin(String username, String email) {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        // ArrayList<User> users = new ArrayList();
+        boolean flag = false;
+        try {
+            con = getConnection();
+//checking to see if username already exist in the database
+            String query = "select username,email from users where username = ? AND email =?";
+            ps = con.prepareStatement(query);
+            ps.setString(1, username);
+            ps.setString(2, email);
+            rs = ps.executeQuery();
+            //set a counter to loop through the available users in the database
+            //int count = 0;
+            if (rs.next()) {
+                flag = true;
+                return flag;
+            } else {
+                flag = false;
+                return flag;
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Exception occured in the register() method: " + e.getMessage());
+        }
+        return flag;
     }
 
     public static void main(String[] args) {
         IUserDao db = new UserDao("repos");
-        System.out.println(db.checkIfExist(35));
+        //System.out.println(db.checkIfExist(35));
         //System.out.println(db.register("John Doe", "John", "john@gmail.com", "password"));
-        //System.out.println(db.login("Jane","password"));
+        //System.out.println(db.login("Jane", "password"));
+        System.out.println(db.ValidateLogin("Jane", "jane@gmail.com"));
+        
     }
 }

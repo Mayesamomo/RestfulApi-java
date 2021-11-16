@@ -237,7 +237,7 @@ public class CommentDao extends Dao implements ICommentDao {
         boolean flag = false;
         try {
             con = getConnection();
-            ps = con.prepareStatement("UPDATE comments SET comment_desc = ? WHERE commentID = ?");
+            ps = con.prepareStatement("UPDATE comments SET comment_desc = ? WHERE commentId = ?");
             ps.setString(1, desc);
             ps.setInt(2, commentID);
             ps.executeUpdate();
@@ -263,13 +263,54 @@ public class CommentDao extends Dao implements ICommentDao {
         return flag;
     }
 
-   public int countCommentOfPost(int postId) {
-        return 0;
-//        Connection con = null;
-//        PreparedStatement ps = null;
-//        ResultSet rs = null;
-//        boolean flag = false;
-//        
-   }
+    @Override
+    public int countCommentOfPost(int postId) {
+        int count = 0;
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        //List<Comment> comments = new ArrayList();
+
+        try {
+
+            conn = getConnection();
+            String query = "SELECT COUNT(c.commentId) FROM comments AS c INNER JOIN posts AS p on p.postId =c.postId WHERE c.postId =? And c.status =1";
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, postId);
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                count = rs.getInt(1);
+            }
+
+        } catch (SQLException se) {
+            System.out.println("SQL Exception occurred: " + se.getMessage());
+            se.printStackTrace();
+        } catch (Exception e) {
+            System.out.println("Exception occurred: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException ex) {
+                    System.out.println("Exception occurred when attempting to close the PreparedStatement: " + ex.getMessage());
+                }
+            }
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException ex) {
+                    System.out.println("Exception occurred when attempting to close the Connection: " + ex.getMessage());
+                }
+            }
+        }
+        return count;
+
+    }
+
+    public static void main(String[] args) {
+        ICommentDao c = new CommentDao("repos");
+        System.out.println(c.countCommentOfPost(22));
+    }
 
 }

@@ -28,13 +28,12 @@ public class ApplicationConfig extends Application {
      * out calling this method in getClasses().
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
-       
+    
+        resources.add(REST.CommentResource.class);
         resources.add(REST.CommunityResource.class);
         resources.add(REST.CrossOriginResourceSharingFilter.class);
         resources.add(REST.PostResource.class);
-        resources.add(REST.UserResource.class);
-        resources.add(TEST.CommentResource.class);
-        
+        resources.add(REST.UserResource.class);   
     }
 
 }

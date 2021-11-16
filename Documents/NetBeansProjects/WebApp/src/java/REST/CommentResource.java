@@ -63,7 +63,6 @@ public class CommentResource {
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     public String getAllComments() {
-
         System.out.println("GET called: getAllComments");
 
         JSONArray array = new JSONArray();
@@ -135,8 +134,29 @@ public class CommentResource {
 
         return array.toJSONString();
     }
+//count comment by postId
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/countComments{postId}")
+    public int countComment(@PathParam("postId")int postId) {
+        int output = 0;
+        //int user_typeNum = Integer.parseInt(postId);
+        try {
+            output = commentDB.countCommentOfPost(postId);
+            
+        } catch (Exception e) {
+            System.out.println("Exception is Comments  : " + e.getMessage());
+            // This exception sends error message to client
+            throw new javax.ws.rs.ServerErrorException(e.getMessage(), 500);
 
+        }
+
+        return output;
+    }
+    
+    
     @POST
+     @Path("/commentsByUser/{userId}")
     //@Consumes(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.TEXT_PLAIN)
     public boolean makeComment(String content) {

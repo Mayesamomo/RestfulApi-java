@@ -147,10 +147,7 @@ public class Community {
         if (!Objects.equals(this.communityName, other.communityName)) {
             return false;
         }
-        if (!Objects.equals(this.date, other.date)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.date, other.date);
     }
 
     @Override

@@ -73,15 +73,12 @@ public class PostResource {
     //@Consumes(MediaType.APPLICATION_JSON)
     public String getAllPosts() {
         IPostDao DB = new PostDao("repos");
-
         System.out.println("GET called: getAllPosts");
-
         JSONArray array = new JSONArray();
         try {
-            for (Post p : DB.getAllPosts()) {
-                JSONObject obj = convertPostToJson(p);
+            DB.getAllPosts().stream().map((p) -> convertPostToJson(p)).forEachOrdered((obj) -> {
                 array.add(obj);
-            }
+            });
             JSONObject response = new JSONObject();
             response.put("Posts", array);
         } catch (Exception e) {
@@ -110,8 +107,8 @@ public class PostResource {
             JSONObject response = new JSONObject();
             response.put("Posts", array);
         } catch (Exception e) {
-            //e.printStackTrace();
-            // This exception sends error message to client
+          
+            // This exception sends server error message to client
             throw new javax.ws.rs.ServerErrorException(e.getMessage(), 500);
         }
 
@@ -145,10 +142,37 @@ public class PostResource {
 
         return array.toJSONString();
     }
+@GET
+    @Path("/getPostByCommunityId/{communityId}")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String getPostByCommunityId(@PathParam("communityId") int communityId) {
+        IPostDao DB = new PostDao("repos");
 
+        System.out.println("GET called: getPostsByCommunity");
+        JSONArray array = new JSONArray();
+        try {
+            List<Post> posts = DB.getAllPostByCommunityId(communityId);
+            if (posts.isEmpty()) {
+                return "{\"message\":\"No posts found\"}";
+            } else {
+                posts.stream().map((p) -> convertPostToJson(p)).forEachOrdered((obj) -> {
+                    array.add(obj);
+                });
+            }
+            JSONObject response = new JSONObject();
+            response.put("Posts", array);
+        } catch (Exception e) {
+            System.out.println(e);
+            // This exception sends error message to client
+            throw new javax.ws.rs.ServerErrorException(e.getMessage(), 500);
+        }
+
+        return array.toJSONString();
+    }
+    
     @POST
     // @Path("/CreatePost/")
-    @Consumes(MediaType.TEXT_PLAIN)
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
     public Response makePost(String content) {
         boolean flag = false;

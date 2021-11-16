@@ -35,7 +35,12 @@ public class Comment {
         this.date = date;
         this.status = status;
     }
-
+ public Comment( int postID, int commentID,  int status) {
+       
+        this.postID = postID;
+        this.commentID = commentID;
+        this.status = status;
+    }
     public int getUserId() {
         return userId;
     }

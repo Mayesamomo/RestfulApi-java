@@ -7,6 +7,7 @@ package REST;
 
 import DAO.IUserDao;
 import DAO.UserDao;
+import DTO.Role;
 import static DTO.Role.ADMIN;
 import static DTO.Role.MODERATOR;
 import static DTO.Role.USER;
@@ -38,7 +39,8 @@ public class UserResource {
 
     @Context
     private UriInfo context;
- private HttpServletResponse response;
+    private HttpServletResponse response;
+
     /**
      * Creates a new instance of UserResource
      */
@@ -55,6 +57,7 @@ public class UserResource {
             JSONParser parser = new JSONParser();
             JSONObject obj = (JSONObject) parser.parse(jsonString);
             u = new User();
+            u.setUserId((int) obj.get("username"));
             u.setUsername((String) obj.get("username"));
             u.setEmail((String) obj.get("email"));
             return u;
@@ -87,30 +90,34 @@ public class UserResource {
     @Produces(MediaType.TEXT_PLAIN)
     // @Consumes(MediaType.APPLICATION_JSON)
     //@Produces(MediaType.APPLICATION_JSON)
-    public Response login(String content) {
+    public String login(String content) {
         User u = new User();
         try {
             System.out.println("GET content = " + content);
-            IUserDao uDAO = new UserDao("repos");
+            IUserDao db = new UserDao("repos");
+            JSONObject jObj = new JSONObject();
             JSONParser parser = new JSONParser();
             JSONObject obj = (JSONObject) parser.parse(content);
+            //int userId = (int) obj.get("userId");
             String userName = (String) obj.get("username");
             String password = (String) obj.get("password");
+             String email = (String) obj.get("email");
             System.out.println(userName + " " + password);
             if (userName == null && password == null) {
-                return Response.status(204).entity("Please enter username and password !!").build();
+                jObj.put("error", "please enter username and password");
             }
-            if (!uDAO.login(userName, password) && password.length() >= 6 && password.length() <= 16 && (u.getUserType() != USER || u.getUserType() != ADMIN || u.getUserType() != MODERATOR)) {
-                //System.out.println(u.toString());
-                return Response.status(201).entity("Wrong username or password !!").build();
-            }else{
-                  uDAO.login(userName, password);
-                  
-                  return Response.status(200).entity("LoggedIn!").build();
+            boolean validateuser = db.ValidateLogin(userName, userName);
+            if (validateuser) {
+                u = db.login(userName, password);
+                System.out.println(u.toString());
+                return convertUserToJson(u).toString();
+
+            } else {
+                jObj.put("error", "Incorrect username or password");
+                return jObj.toString();
             }
-          
-            
-        } catch (Exception e) {
+
+        } catch (org.json.simple.parser.ParseException e) {
             System.out.println("Exception is User GET : " + e.getMessage());
             // This exception sends error message to client
             throw new javax.ws.rs.ServerErrorException(e.getMessage(), 500);
@@ -131,10 +138,10 @@ public class UserResource {
     //register meetthod
     @POST
     @Path("/register")
-//    @Consumes(MediaType.TEXT_PLAIN)
-//    @Produces(MediaType.TEXT_PLAIN)
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.TEXT_PLAIN)
+    //@Consumes(MediaType.APPLICATION_JSON)
+    // @Produces(MediaType.APPLICATION_JSON)
     public Response register(String content) {
         boolean flag = false;
         System.out.println("POST content = " + content);

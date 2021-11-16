@@ -53,14 +53,28 @@ public class User {
         this.userType = userType;
     }
 
+    public User(int userId, int profileId, String userType, String username) {
+        this.userId = userId;
+        this.profileId = profileId;
+        this.userType = Role.valueOf(userType);
+        this.username = username;
+
+    }
+
     public User(String fullName, String email, String username) {
         this.fullName = fullName;
         this.email = email;
         this.username = username;
     }
 
-    public User(int aInt, int aInt0, int aInt1, String username) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public User(int userId, int profileId, String fullName, String email, int status, String userType, String username) {
+        this.userId = userId;
+        this.profileId = profileId;
+        this.fullName = fullName;
+        this.email = email;
+
+        this.userType = Role.valueOf(userType);
+        this.username = username;
     }
 
     public int getUserId() {
@@ -181,6 +195,5 @@ public class User {
     public String toString() {
         return "User{" + "userId=" + userId + ", profileId=" + profileId + ", fullName=" + fullName + ", email=" + email + ", username=" + username + ", userType=" + userType + ", date=" + date + ", status=" + status + '}';
     }
-    
-    
+
 }

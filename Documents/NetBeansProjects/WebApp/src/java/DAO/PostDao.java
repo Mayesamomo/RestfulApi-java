@@ -32,7 +32,7 @@ public class PostDao extends Dao implements IPostDao {
 
         try {
             con = getConnection();
-            String query = "SELECT u.username, c.communityName, p.postID, p.userID, p.postTitle, p.postDesc, p.postDate, p.media, p.status FROM posts p INNER JOIN users u ON u.userId = 35 LEFT JOIN community c ON c.communityId = p.communityId WHERE p.STATUS = 1 ORDER BY p.postDate DESC";
+            String query = "SELECT u.username, c.communityName, p.postID, p.userID, p.postTitle, p.postDesc, p.postDate, p.media, p.status FROM posts p INNER JOIN users u ON u.userId = p.userId LEFT JOIN community c ON c.communityId = p.communityId WHERE p.STATUS = 1 ORDER BY p.postDate DESC";
             ps = con.prepareStatement(query);
             rs = ps.executeQuery();
 
@@ -334,6 +334,6 @@ public class PostDao extends Dao implements IPostDao {
         // System.out.println(pd.makePost(35, "hola mundo", "com el teu grupo no ho fan seus feina te quedaras falta i sense res per fer", "ni una mierda"));
         //System.out.println(pd.getPostsByUser(36));
        // System.out.println(pd.getOnePost(23));
-        System.out.println(pd.getAllPostByCommunityId(5));
+        System.out.println(pd.getAllPosts());
     }
 }
